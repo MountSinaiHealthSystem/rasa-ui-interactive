@@ -1,0 +1,1 @@
+psql -v postgres_user=postgres -U postgres -d rasaui -a -f dbcreate.sql

@@ -48,6 +48,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
+      - "$PWD/resources/database/10-initdb.sh:/docker-entrypoint-initdb.d/10-initdb.sh"
+      - "$PWD/resources/database/dbcreate.sql:/dbcreate.sql"
       - "rasauidata:/var/lib/postgresql/data"
     environment:
       POSTGRES_USER: "postgres"
@@ -62,6 +64,7 @@ services:
     depends_on:
       - "rasa_nlu"
       - "postgres"
+      - "rasa_core"
     environment:
       rasanluendpoint: "http://rasa_nlu:5000"
       rasacoreendpoint: "http://rasa_core:5005"
