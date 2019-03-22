@@ -16,8 +16,30 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - "./rasa-app-data/models/:/app/projects"
+      - "./rasa-app-data/models/current/nlu:/app/projects"
+      - "./rasa-app-data/project/:/app/config"
       - "./rasa-app-data/logs:/app/logs"
+    command:
+      - start
+      # - --pre_load
+      # - all
+      # this is gonna be annoying since yaml doesn't support block comments ... anyway
+      # ideally we can pre-load all models into memory before starting rasa ui BUT
+      # it looks like there is a bug where this only works if the folder directory is specifically in this way:
+      # /projects
+      #     -- <project name>
+      #             -- <model_date_time> (instead of <project_name>_date_time which rasa nlu will do by default)
+      # maybe we can run a script to rename the models at `docker-compse up`?
+      - --path
+      - /app/projects
+      - --write
+      - /app/logs/nlu
+      - --response_log
+      - /app/logs/nlu
+      - --config
+      - /app/config/nlu_config.yml
+      - --debug
+      - --verbose
 
   rasa_core:
     image: rasa/rasa_core:0.12.1
@@ -64,7 +86,6 @@ services:
     depends_on:
       - "rasa_nlu"
       - "postgres"
-      - "rasa_core"
     environment:
       rasanluendpoint: "http://rasa_nlu:5000"
       rasacoreendpoint: "http://rasa_core:5005"

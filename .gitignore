@@ -1,7 +1,10 @@
 .DS_Store
 npm-debug.log
 node_modules
-rasa-app-data/
+# rasa-app-data/
+
+# logs
+*.log
 
 Jenkinsfile
 
